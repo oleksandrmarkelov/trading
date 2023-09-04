@@ -11,8 +11,8 @@ import sys
 config_logging(logging, logging.INFO)
 
 # define your API key and secret
-API_KEY = "XXXX"
-API_SECRET = "XXXX"
+API_KEY = "qqq"
+API_SECRET = "qqq"
 
 # define the client
 client = Client (API_KEY, API_SECRET)
@@ -42,10 +42,7 @@ def main():
   if not response["dualSidePosition"]:
     response = client.change_position_mode(dualSidePosition="true", recvWindow=2000)
     print(response)
-  order_price=-1;
-  short_o_id=-1;
-  long_o_id=-1;
-  updatable = False
+  updatable = True
   counter = 0;
   while True:
     time.sleep(1)
@@ -73,8 +70,8 @@ def main():
           if already_active[0]['side'] == 'SELL':
             if price > float(already_active[0]['activatePrice']):
               quantity = float(already_active[0]['origQty'])
-              print('cancel order '+str(short_o_id))
-              client.cancel_order(symbol=position,orderId=short_o_id,recvWindow=2000)
+              print('cancel s order '+str(already_active[1]['orderId']))
+              client.cancel_order(symbol=position,orderId=already_active[1]['orderId'],recvWindow=2000)
               response5 = client.new_order(
                 symbol=position,
                 positionSide="SHORT",
@@ -88,8 +85,8 @@ def main():
               print(response5)
             elif price < float(already_active[1]['activatePrice']):
               quantity = float(already_active[1]['origQty'])
-              print('cancel order '+str(long_o_id))
-              client.cancel_order(symbol=position,orderId=long_o_id,recvWindow=2000)
+              print('cancel l order '+str(already_active[0]['orderId']))
+              client.cancel_order(symbol=position,orderId=already_active[0]['orderId'],recvWindow=2000)
               response5 = client.new_order(
                 symbol=position,
                 positionSide="LONG",
@@ -104,8 +101,8 @@ def main():
           else:
             if price > float(already_active[1]['activatePrice']):
               quantity = float(already_active[1]['origQty'])
-              print('cancel order '+str(short_o_id))
-              client.cancel_order(symbol=position,orderId=short_o_id,recvWindow=2000)
+              print('cancel short order '+str(already_active[0]['orderId']))
+              client.cancel_order(symbol=position,orderId=already_active[0]['orderId'],recvWindow=2000)
               response5 = client.new_order(
                 symbol=position,
                 positionSide="SHORT",
@@ -119,8 +116,8 @@ def main():
               print(response5)
             elif price < float(already_active[0]['activatePrice']):
               quantity = float(already_active[0]['origQty'])
-              print('cancel order '+str(long_o_id))
-              client.cancel_order(symbol=position,orderId=long_o_id,recvWindow=2000)
+              print('cancel long order '+str(already_active[1]['orderId']))
+              client.cancel_order(symbol=position,orderId=already_active[1]['orderId'],recvWindow=2000)
               response5 = client.new_order(
                 symbol=position,
                 positionSide="LONG",
@@ -132,17 +129,12 @@ def main():
               )
               updatable=False
               print(response5)
-        #if len(already_active) == 1:
-        #    o_id = already_active[0]["orderId"]
-        #    print("cancelling single order "+o_id)
-        #    client.cancel_order(symbol=position,orderId=o_id,recvWindow=2000)
-        print("already orders placed, skipping")
-        continue
+      print("already orders placed, skipping")
+      continue
 
     symbol_info = client.ticker_price(position)
     price = float(symbol_info['price'])
     logging.info(price)
-    order_price=price;
 
     quantity = round((min_bal/2)*leverage / price, 1)
 
@@ -179,7 +171,6 @@ def main():
         callbackRate=0.5
         )
     print(response3)
-    short_o_id=response3['orderId']
 
     response4 = client.new_order(
         symbol=position,
@@ -191,7 +182,6 @@ def main():
         callbackRate=0.5
         )
     print(response4)
-    long_o_id=response4['orderId']
     updatable = True
 
 
