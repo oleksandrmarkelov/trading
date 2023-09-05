@@ -11,14 +11,16 @@ import sys
 config_logging(logging, logging.INFO)
 
 # define your API key and secret
-API_KEY = "qqq"
-API_SECRET = "qqq"
+API_KEY = "SMcnXgxs0PS06RZY95yp5dyHW429qD0FYxvlJRhOym5THGlziZPdHcIa8w51430h"
+API_SECRET = "W05siBWQKXZ8Abls7e5Zes40UOEPOHYtrVlhtJirBkKoHDtXs3cvZxe0DxpsPQmL"
 
 # define the client
 client = Client (API_KEY, API_SECRET)
 
 position="XRPUSDT"
 leverage=25
+callback=0.3
+th=0.002
 
 max_bal = 50
 min_bal = 10
@@ -45,7 +47,7 @@ def main():
   updatable = True
   counter = 0;
   while True:
-    time.sleep(1)
+    time.sleep(2)
     counter +=1
     print("--------------------")
     now = datetime.datetime.now()
@@ -58,7 +60,7 @@ def main():
         sys.exit(0)
 
     already_active = client.get_orders(
-        symbol=position, recvWindow=2000
+        symbol=position, recvWindow=10000
     )
     print(already_active)
 
@@ -79,7 +81,7 @@ def main():
                 type="TRAILING_STOP_MARKET",
                 quantity=quantity,
                 activationPrice=round(price-0.001,4),
-                callbackRate=0.5
+                callbackRate=callback
               )
               updatable=False
               print(response5)
@@ -94,7 +96,7 @@ def main():
                 type="TRAILING_STOP_MARKET",
                 quantity=quantity,
                 activationPrice=round(price+0.001,4),
-                callbackRate=0.5
+                callbackRate=callback
               )
               updatable=False
               print(response5)
@@ -110,7 +112,7 @@ def main():
                 type="TRAILING_STOP_MARKET",
                 quantity=quantity,
                 activationPrice=round(price-0.001,4),
-                callbackRate=0.5
+                callbackRate=callback
               )
               updatable=False
               print(response5)
@@ -125,7 +127,7 @@ def main():
                 type="TRAILING_STOP_MARKET",
                 quantity=quantity,
                 activationPrice=round(price+0.001,4),
-                callbackRate=0.5
+                callbackRate=callback
               )
               updatable=False
               print(response5)
@@ -158,8 +160,8 @@ def main():
     )
     print(response2)
     time.sleep(1)
-    print("activation "+str(round(price-0.002,4)))
-    print("activation "+str(round(price+0.002,4)))
+    print("activation "+str(round(price-th,4)))
+    print("activation "+str(round(price+th,4)))
 
     response3 = client.new_order(
         symbol=position,
@@ -167,8 +169,8 @@ def main():
         side="BUY",
         type="TRAILING_STOP_MARKET",
         quantity=quantity,
-        activationPrice=round(price-0.002,4),
-        callbackRate=0.5
+        activationPrice=round(price-th,4),
+        callbackRate=callback
         )
     print(response3)
 
@@ -178,8 +180,8 @@ def main():
         side="SELL",
         type="TRAILING_STOP_MARKET",
         quantity=quantity,
-        activationPrice=round(price+0.002,4),
-        callbackRate=0.5
+        activationPrice=round(price+th,4),
+        callbackRate=callback
         )
     print(response4)
     updatable = True
