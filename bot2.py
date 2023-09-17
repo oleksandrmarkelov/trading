@@ -11,8 +11,8 @@ import sys
 config_logging(logging, logging.INFO)
 
 # define your API key and secret
-API_KEY = "SMcnXgxs0PS06RZY95yp5dyHW429qD0FYxvlJRhOym5THGlziZPdHcIa8w51430h"
-API_SECRET = "W05siBWQKXZ8Abls7e5Zes40UOEPOHYtrVlhtJirBkKoHDtXs3cvZxe0DxpsPQmL"
+API_KEY = ""
+API_SECRET = ""
 
 # define the client
 client = Client (API_KEY, API_SECRET)
